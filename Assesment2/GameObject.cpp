@@ -8,16 +8,14 @@
 CGameObject::CGameObject()
 {
 	//Refrencing variables
-	m_pLevel = nullptr;
-	m_bDeleteGameObject = false;
+	m_bDeleteObject = false;
 
 	//Transformation variables
-	m_v2fScale.x = 1.0f;
-	m_v2fScale.y = 1.0f;
+	m_v2fScale = sf::Vector2f(1.0f, 1.0f);
 	m_fRotation = 0.0f; //Don't use for objects with collision
 
 	//Drawing variables
-	m_texDraw.loadFromFile("Assets/Sprites/DefaultSprite.png");
+	m_texDraw.loadFromFile("Assets/Sprites/Default.png");
 	m_texDraw.setRepeated(true);
 	m_sprDraw.setTexture(m_texDraw);
 	m_fNextFrameTimer = 0;
@@ -26,68 +24,15 @@ CGameObject::CGameObject()
 
 /*virtual */CGameObject::~CGameObject() {}
 
-//Refrencing methods
-void CGameObject::AddTag(const std::string _strTag)
-{
-	m_strTags.insert(_strTag);
-}
-
 const bool CGameObject::TagExists(const std::string _strTagName)
 {
 	if (m_strTags.find(_strTagName) != m_strTags.end()) return true;
 	else return false;
 }
 
-/*virtual */void CGameObject::DeleteGameObject()
-{
-	m_bDeleteGameObject = true;
-}
-
-//Transformation methods
-const sf::Vector2f CGameObject::GetPosition()
-{
-	return m_v2fPosition;
-}
-
-void CGameObject::SetPosition(const sf::Vector2f _v2fNewPosition)
-{
-	m_v2fPosition = _v2fNewPosition;
-}
-
-const sf::Vector2f CGameObject::GetOrigin()
-{
-	return m_v2fOrigin;
-}
-
-const sf::Vector2f CGameObject::GetScale()
-{
-	return m_v2fScale;
-}
-
-void CGameObject::SetScale(const sf::Vector2f _v2fNewScale)
-{
-	m_v2fScale = _v2fNewScale;
-}
-
-const float CGameObject::GetRotation()
-{
-	return m_fRotation;
-}
-
-void CGameObject::SetRotation(const float _fDegrees)
-{
-	m_fRotation = _fDegrees;
-}
-
-//Collision methods
 const bool CGameObject::GetIsCollidable()
 {
 	return m_rectfHitbox != sf::Rect<float>();
-}
-
-const sf::Rect<float> CGameObject::GetHitbox()
-{
-	return m_rectfHitbox;
 }
 
 //Drawing methods

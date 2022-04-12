@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include "ConsoleInterface.h"
 #include "GameManager.h"
+#include "Agent.h"
 #include "Button.h"
 #include <Windows.h>
 
@@ -13,7 +14,8 @@ int main()
 {
 	//Create Game Manager
 	CGameManager* pGameManager = new CGameManager();
-
+	CAgent Agent;
+	
 	//Create Console Interace
 	CConsoleInterface ConsoleInterface(pGameManager);
 	
@@ -49,24 +51,25 @@ int main()
 		}
 		
 		//Check whether the Game Manager should be deleted
-		if (pGameManager != nullptr && pGameManager->GetDeleteGameManager())
+		if (pGameManager != nullptr && pGameManager->m_bDeleteObject)
 		{
 			delete pGameManager; pGameManager = nullptr;
 		}
 
 		//Game loop
 		if (pGameManager != nullptr) 
-			{
-				GameWindow.clear();
+		{
+			GameWindow.clear(sf::Color(255U,255U,255U));
 
-				if (GameWindow.hasFocus()) pGameManager->Update(GameWindow, fDeltaTime);
+			if (GameWindow.hasFocus()) pGameManager->Update(GameWindow, fDeltaTime);
+			Agent.Update(GameWindow, fDeltaTime);
 
-				GameWindow.display();
-			}
+			GameWindow.display();
+		}
 		else
-			{
-				GameWindow.close();
-			}
+		{
+			GameWindow.close();
+		}
 	}
 }
 

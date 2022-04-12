@@ -2,20 +2,17 @@
 #include <string>
 #include <deque>
 #include <set>
+#include "UpdatedObject.h"
 
 #pragma once
-class CLevel;
-
-class CGameObject
+class CGameObject : public CUpdatedObject
 {
 protected:
-	friend class CLevel;
 	friend class CDebugger;
 
+public:
 	//Refrencing variables
-	CLevel* m_pLevel;
 	std::set<std::string> m_strTags;
-	bool m_bDeleteGameObject;
 
 	//Transformation variables
 	sf::Vector2f m_v2fPosition;
@@ -23,38 +20,21 @@ protected:
 	sf::Vector2f m_v2fScale;
 	float m_fRotation; //Don't use for objects with collision
 
-	//Collision variables
-	sf::Rect<float> m_rectfHitbox; //The coordinates of m_rectfHitbox is using the object's local coordinates
-
 	//Drawing variables
 	sf::Texture m_texDraw;
 	sf::Sprite m_sprDraw;
 	float m_fNextFrameTimer;
 	bool m_bVisible;
 
-public:
-	//Constructors
+	//Collision variables
+	sf::Rect<float> m_rectfHitbox; //The coordinates of m_rectfHitbox is using the object's local coordinates
+
 	CGameObject();
 	virtual ~CGameObject();
 
-	//Refrencing methods
-	void AddTag(const std::string _strTag);
 	const bool TagExists(const std::string _strTagName);
-	virtual void DeleteGameObject();
-
-	//Transformation methods
-	const sf::Vector2f GetPosition();
-	void SetPosition(const sf::Vector2f _v2fNewPosition);
-	const sf::Vector2f GetOrigin();
-	const sf::Vector2f GetScale();
-	void SetScale(const sf::Vector2f _v2fNewScale);
-	const float GetRotation();
-	void SetRotation(const float _fDegrees);
-
 	const bool GetIsCollidable();
-	const sf::Rect<float> GetHitbox();
 
-	//Drawing methods
 	bool AnimateSprite
 	( 
 		sf::Sprite& _Sprite,

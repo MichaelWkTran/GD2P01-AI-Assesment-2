@@ -30,5 +30,10 @@
 *.app
 
 # Folders
-/ipch/
+ipch/
+Debug/
+Release/
+
 *.ipch
+*.filters
+*.user

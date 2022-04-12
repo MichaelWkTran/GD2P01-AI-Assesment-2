@@ -157,7 +157,7 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 		return void();
 	}
 	case 8: //Exit
-		m_pGameManager->DeleteGameManager();
+		m_pGameManager->m_bDeleteObject = true;
 		return void();
 	}
 }
