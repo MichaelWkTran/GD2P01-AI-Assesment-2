@@ -11,7 +11,10 @@ namespace sf
 
 	sf::Vector2f Normalise(sf::Vector2f _v2f)
 	{
-		return _v2f / Magnitude(_v2f);
+		float&& fMagnitude = Magnitude(_v2f);
+
+		if (fMagnitude != 0) return _v2f / fMagnitude;
+		else return sf::Vector2f();
 	}
 
 	sf::Vector2f Truncate(sf::Vector2f _v2f, float _fMaxMagnitude)

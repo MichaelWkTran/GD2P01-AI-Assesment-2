@@ -1,4 +1,5 @@
 #include "ConsoleInterface.h"
+#include "Agent.h"
 //#include "GameManager.h"
 //#include <iostream>
 //#include <limits>
@@ -55,9 +56,11 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 	case 0: //Seek
 	{
 		m_pGameManager->m_GameState = GameState::Seek;
+		CAgent* Agent = (CAgent*)m_pGameManager->CreateObject<CAgent>();
+		Agent->m_sprDraw.setColor(sf::Color::Red);
+		
 		_RenderWindow.setVisible(true);
 		system("CLS");
-
 
 		std::cout << "Seek\n\n";
 		std::cout << "Press BACKSPACE to return to the main menu";

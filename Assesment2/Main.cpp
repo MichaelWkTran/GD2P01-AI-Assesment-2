@@ -1,27 +1,28 @@
+#include "ExternalVariables.h"
 #include <SFML/Graphics.hpp>
 #include "ConsoleInterface.h"
 #include "GameManager.h"
 #include "Agent.h"
 #include "Button.h"
 #include <Windows.h>
+#include <stdlib.h>
+#include <time.h>
 
 void SetView(sf::RenderWindow& GameWindow, sf::View& GameWindowView, const sf::Vector2u& _v2uOriginalSize);
-sf::Clock DeltaTimeClock;
-float fDeltaTime;
-const sf::Vector2u v2uGameWindowSize(800U, 450U);
 
 int main()
 {
 	//Create Game Manager
 	CGameManager* pGameManager = new CGameManager();
-	CAgent Agent;
-	
+
 	//Create Console Interace
 	CConsoleInterface ConsoleInterface(pGameManager);
 	
 	//Create the game window
 	sf::RenderWindow GameWindow(sf::VideoMode(v2uGameWindowSize.x, v2uGameWindowSize.y), "");
 	sf::View GameWindowView;
+
+	srand((unsigned int)time(NULL));
 
 	//Open Console Interface
 	ConsoleInterface.Update(GameWindow);
@@ -30,7 +31,7 @@ int main()
 	while (GameWindow.isOpen())
 	{
 		//Set Delta Time
-		fDeltaTime = DeltaTimeClock.restart().asSeconds();
+		fDeltatime = clockDeltaTime.restart().asSeconds();
 		
 		//Poll Events
 		sf::Event WindowEvent;
@@ -61,8 +62,7 @@ int main()
 		{
 			GameWindow.clear(sf::Color(255U,255U,255U));
 
-			if (GameWindow.hasFocus()) pGameManager->Update(GameWindow, fDeltaTime);
-			Agent.Update(GameWindow, fDeltaTime);
+			if (GameWindow.hasFocus()) pGameManager->Update(GameWindow);
 
 			GameWindow.display();
 		}

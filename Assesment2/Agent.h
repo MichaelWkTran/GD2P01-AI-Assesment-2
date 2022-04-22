@@ -9,7 +9,12 @@ public:
 	float m_fMaxVelocity;
 	float m_fMaxForce;
 
+	float fWanderTimer;
+	float fWanderCooldown;
+
+	sf::Vector2f m_v2fTarget;
+
 	CAgent();
 
-	virtual void Update(sf::RenderWindow& _RenderWindow, float& _fDeltaTime);
+	virtual void Update(sf::RenderWindow& _RenderWindow);
 };

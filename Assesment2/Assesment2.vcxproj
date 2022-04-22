@@ -150,6 +150,8 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="Agent.h" />
     <ClInclude Include="ConsoleInterface.h" />
+    <ClInclude Include="ExternalVariables.h" />
+    <ClInclude Include="SteeringBehaviors.h" />
     <ClInclude Include="UpdatedObject.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameObject.h" />
@@ -159,6 +161,7 @@
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Agent.cpp" />
     <ClCompile Include="ConsoleInterface.cpp" />
+    <ClCompile Include="ExternalVariables.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Main.cpp" />
