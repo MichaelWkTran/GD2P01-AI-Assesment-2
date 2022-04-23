@@ -1,9 +1,13 @@
+#pragma once
 #include "GameObject.h"
 
-#pragma once
+enum class AgentBehaviour { Seek, Flee, Pursue, Evade, Wander, Arrival, Flocking, LeaderFollowing };
+
 class CAgent : public CGameObject
 {
 public:
+	AgentBehaviour m_AgentBehaviour;
+
 	float m_fMass;
 	sf::Vector2f m_v2fVelocity;
 	float m_fMaxVelocity;
@@ -13,6 +17,7 @@ public:
 	float fWanderCooldown;
 
 	sf::Vector2f m_v2fTarget;
+	CAgent* m_pTarget;
 
 	CAgent();
 

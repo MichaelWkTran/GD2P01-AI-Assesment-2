@@ -4,11 +4,20 @@
 
 CGameManager::CGameManager()
 {
-	m_GameState = GameState::Seek;
-
 	//UI Variables
 	m_fntCurrent.loadFromFile("Assets/Fonts/arial.ttf");
 	m_txtCurrent.setFont(m_fntCurrent); m_txtCurrent.setCharacterSize(20U);
+}
+
+void CGameManager::Clear()
+{
+	while (m_dequeUpdatedObjects.size() != 0)
+	{
+		delete m_dequeUpdatedObjects.front();
+		m_dequeUpdatedObjects.pop_front();
+	}
+
+	//Memeory is increasing as if the objects are not being deleted even though the deque 
 }
 
 sf::Vector2f* CGameManager::GetViewPositionPointer()

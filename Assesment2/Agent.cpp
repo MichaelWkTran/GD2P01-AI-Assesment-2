@@ -13,33 +13,79 @@ CAgent::CAgent()
 	m_sprDraw.setTextureRect(sf::Rect<int>(0, 0, 32, 32));
 	m_sprDraw.setColor(sf::Color::Black);
 
+	m_AgentBehaviour = AgentBehaviour::Seek;
+
 	m_fMass = 1.0f;
-	m_fMaxVelocity = 200.0f;//600.0f;
+	m_fMaxVelocity = 600.0f;
 	m_fMaxForce = 300.0f;
 
-	fWanderTimer = 0.2f;
+	fWanderTimer = 0.5f;
 	fWanderCooldown = 0.0f;
+	m_pTarget = nullptr;
 }
 
 /*virtual*/ void CAgent::Update(sf::RenderWindow& _RenderWindow)
 {
-	//m_v2fTarget = _RenderWindow.mapPixelToCoords(sf::Mouse::getPosition(_RenderWindow));
-
-	if (fWanderCooldown <= 0)
+	switch (m_AgentBehaviour)
 	{
-		m_v2fTarget = SteeringBehaviours::GetWanderTargetPosition(m_v2fPosition, 100.0f, 80.0f, m_v2fVelocity, m_fMaxVelocity, m_fMaxForce, m_fMass);
-		fWanderCooldown = fWanderTimer;
+	case AgentBehaviour::Seek:
+	{
+		m_v2fTarget = _RenderWindow.mapPixelToCoords(sf::Mouse::getPosition(_RenderWindow));
+		SteeringBehaviours::Seek(m_v2fPosition, m_v2fTarget, m_v2fVelocity, m_fMaxVelocity, m_fMaxForce);
+		break;
 	}
-	else
+	case AgentBehaviour::Flee:
 	{
-		fWanderCooldown -= fDeltatime;
+		m_v2fTarget = _RenderWindow.mapPixelToCoords(sf::Mouse::getPosition(_RenderWindow));
+		SteeringBehaviours::Flee(m_v2fPosition, m_v2fTarget, m_v2fVelocity, m_fMaxVelocity, m_fMaxForce);
+		break;
+	}
+	case AgentBehaviour::Pursue:
+	{
+		if (m_pTarget == nullptr) break;
+
+		m_v2fTarget = SteeringBehaviours::GetPursueTargetPosition(m_v2fPosition, m_pTarget->m_v2fPosition, m_v2fVelocity, m_pTarget->m_v2fVelocity, 10000.0f);
+		SteeringBehaviours::Seek(m_v2fPosition, m_v2fTarget, m_v2fVelocity, m_fMaxVelocity, m_fMaxForce);
+		break;
+	}	
+	case AgentBehaviour::Evade:
+	{
+		if (m_pTarget == nullptr) break;
+
+		m_v2fTarget = SteeringBehaviours::GetPursueTargetPosition(m_v2fPosition, m_pTarget->m_v2fPosition, m_v2fVelocity, m_pTarget->m_v2fVelocity, 10000.0f);
+		SteeringBehaviours::Flee(m_v2fPosition, m_v2fTarget, m_v2fVelocity, m_fMaxVelocity, m_fMaxForce);
+		break;
+	}
+	case AgentBehaviour::Wander:
+	{
+		if (fWanderCooldown <= 0)
+		{
+			m_v2fTarget = SteeringBehaviours::GetWanderTargetPosition(150.0f, 80.0f, m_v2fPosition, m_v2fVelocity, m_fMaxVelocity, m_fMaxForce, m_fMass);
+			fWanderCooldown = fWanderTimer;
+		}
+		else
+		{
+			fWanderCooldown -= fDeltatime;
+		}
+
+		SteeringBehaviours::Seek(m_v2fPosition, m_v2fTarget, m_v2fVelocity, m_fMaxVelocity, m_fMaxForce);
+		break;
+	}
+	case AgentBehaviour::Arrival:
+	{
+		m_v2fTarget = _RenderWindow.mapPixelToCoords(sf::Mouse::getPosition(_RenderWindow));
+		SteeringBehaviours::Arrive(400.0f, m_v2fPosition, m_v2fTarget, m_v2fVelocity, m_fMaxVelocity, m_fMaxForce);
+		break;
+	}
 	}
 	
-	SteeringBehaviours::SeekFlee(m_v2fPosition, m_v2fTarget, m_v2fVelocity, m_fMaxVelocity, m_fMaxForce);
 	
 	//Screen Wrap
 	{
-		auto MomemtumOutsideBounds = [this]() {};//if (sf::Magnitude(m_v2fVelocity) < 300.0f) { m_v2fVelocity = sf::Normalise(m_v2fVelocity) * 300.0f; } };
+		auto MomemtumOutsideBounds = [this]()
+		{
+			if (sf::Magnitude(m_v2fVelocity) < 300.0f && (m_AgentBehaviour == AgentBehaviour::Flee || m_AgentBehaviour == AgentBehaviour::Evade)) { m_v2fVelocity = sf::Normalise(m_v2fVelocity) * 300.0f; }
+		};
 
 		if (m_v2fPosition.x < -m_sprDraw.getTextureRect().width) { m_v2fPosition.x = (float)v2uGameWindowSize.x + (float)m_sprDraw.getTextureRect().width; MomemtumOutsideBounds(); }
 		else if (m_v2fPosition.x > (float)v2uGameWindowSize.x + m_sprDraw.getTextureRect().width) { m_v2fPosition.x = -(float)m_sprDraw.getTextureRect().width; MomemtumOutsideBounds(); }

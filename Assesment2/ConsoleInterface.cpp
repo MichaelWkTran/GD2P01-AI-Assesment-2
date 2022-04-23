@@ -1,5 +1,6 @@
 #include "ConsoleInterface.h"
 #include "Agent.h"
+#include "ExternalVariables.h"
 //#include "GameManager.h"
 //#include <iostream>
 //#include <limits>
@@ -12,6 +13,7 @@ CConsoleInterface::CConsoleInterface(CGameManager* _pGameManager)
 void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 {
 	_RenderWindow.setVisible(false);
+	m_pGameManager->Clear();
 	int iInput = -1;
 
 	while (true)
@@ -55,14 +57,14 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 	{
 	case 0: //Seek
 	{
-		m_pGameManager->m_GameState = GameState::Seek;
 		CAgent* Agent = (CAgent*)m_pGameManager->CreateObject<CAgent>();
-		Agent->m_sprDraw.setColor(sf::Color::Red);
+		Agent->m_AgentBehaviour = AgentBehaviour::Seek;
 		
 		_RenderWindow.setVisible(true);
 		system("CLS");
 
 		std::cout << "Seek\n\n";
+		std::cout << "The agent will always move towards your mouse. Move your mouse to change where the agent will move towards.\n\n";
 		std::cout << "Press BACKSPACE to return to the main menu";
 
 
@@ -70,12 +72,14 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 	}
 	case 1: //Flee
 	{
-		m_pGameManager->m_GameState = GameState::Flee;
+		CAgent* Agent = (CAgent*)m_pGameManager->CreateObject<CAgent>();
+		Agent->m_AgentBehaviour = AgentBehaviour::Flee;
+
 		_RenderWindow.setVisible(true);
 		system("CLS");
 
-
 		std::cout << "Flee\n\n";
+		std::cout << "The agent will always move away your mouse. Move your mouse to change where the agent will avoid.\n\n";
 		std::cout << "Press BACKSPACE to return to the main menu";
 
 
@@ -83,7 +87,16 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 	}
 	case 2: //Pursue
 	{
-		m_pGameManager->m_GameState = GameState::Pursue;
+		CAgent* Player = (CAgent*)m_pGameManager->CreateObject<CAgent>();
+		Player->m_fMaxVelocity = 400.0f;
+		Player->m_sprDraw.setColor(sf::Color::Red);
+		Player->m_AgentBehaviour = AgentBehaviour::Seek;
+
+		CAgent* Agent = (CAgent*)m_pGameManager->CreateObject<CAgent>();
+		Agent->m_pTarget = Player;
+		Agent->m_fMaxVelocity = 300.0f;
+		Agent->m_AgentBehaviour = AgentBehaviour::Pursue;
+
 		_RenderWindow.setVisible(true);
 		system("CLS");
 
@@ -96,10 +109,18 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 	}
 	case 3: //Evade
 	{
-		m_pGameManager->m_GameState = GameState::Evade;
 		_RenderWindow.setVisible(true);
 		system("CLS");
 
+		CAgent* Player = (CAgent*)m_pGameManager->CreateObject<CAgent>();
+		Player->m_fMaxVelocity = 400.0f;
+		Player->m_sprDraw.setColor(sf::Color::Red);
+		Player->m_AgentBehaviour = AgentBehaviour::Seek;
+
+		CAgent* Agent = (CAgent*)m_pGameManager->CreateObject<CAgent>();
+		Agent->m_pTarget = Player;
+		Agent->m_fMaxVelocity = 300.0f;
+		Agent->m_AgentBehaviour = AgentBehaviour::Evade;
 
 		std::cout << "Evade\n\n";
 		std::cout << "Press BACKSPACE to return to the main menu";
@@ -109,12 +130,18 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 	}
 	case 4: //Wander
 	{
-		m_pGameManager->m_GameState = GameState::Wander;
+		for (int i = 0; i < 30; i++)
+		{
+			CAgent* Agent = (CAgent*)m_pGameManager->CreateObject<CAgent>();
+			Agent->m_fMaxVelocity = 200.0f;
+			Agent->m_AgentBehaviour = AgentBehaviour::Wander;
+		}
+		
 		_RenderWindow.setVisible(true);
 		system("CLS");
 
-
 		std::cout << "Wander\n\n";
+		std::cout << "All agents will wander around the screen.\n\n";
 		std::cout << "Press BACKSPACE to return to the main menu";
 
 
@@ -122,7 +149,9 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 	}
 	case 5: //Arrival
 	{
-		m_pGameManager->m_GameState = GameState::Arrival;
+		CAgent* Agent = (CAgent*)m_pGameManager->CreateObject<CAgent>();
+		Agent->m_AgentBehaviour = AgentBehaviour::Arrival;
+
 		_RenderWindow.setVisible(true);
 		system("CLS");
 
@@ -135,7 +164,6 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 	}
 	case 6: //Flocking
 	{
-		m_pGameManager->m_GameState = GameState::Flocking;
 		_RenderWindow.setVisible(true);
 		system("CLS");
 
@@ -148,7 +176,6 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 	}
 	case 7: //Leader Following
 	{
-		m_pGameManager->m_GameState = GameState::LeaderFollowing;
 		_RenderWindow.setVisible(true);
 		system("CLS");
 

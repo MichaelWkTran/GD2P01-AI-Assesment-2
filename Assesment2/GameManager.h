@@ -6,8 +6,6 @@
 #include <iostream>
 
 #pragma once
-enum class GameState {Seek, Flee, Pursue, Evade, Wander, Arrival, Flocking, LeaderFollowing};
-
 class CGameManager : public CUpdatedObject
 {
 private:
@@ -19,13 +17,13 @@ private:
 	sf::Text m_txtCurrent;
 
 public:
-	GameState m_GameState;
 	std::deque<CUpdatedObject*> m_dequeUpdatedObjects;
 
 	CGameManager();
 
 	template <class T>
 	/*inline*/ CUpdatedObject* CreateObject();
+	void Clear();
 
 	sf::Vector2f* GetViewPositionPointer();
 	void SetViewPosition(const sf::Vector2f _v2fViewPosition);
