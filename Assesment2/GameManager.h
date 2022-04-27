@@ -11,15 +11,16 @@ class CGameManager : public CUpdatedObject
 private:
 	//Game Variables
 	sf::Vector2f m_v2fViewPosition;
-	
-	//UI Variables
-	sf::Font m_fntCurrent;
-	sf::Text m_txtCurrent;
+	bool m_bLeftMouseButtonPressed;
+	bool m_bRightMouseButtonPressed;
 
 public:
 	std::deque<CUpdatedObject*> m_dequeUpdatedObjects;
+	unsigned int m_uMaxAgents;
+	unsigned int m_uAgentCount;
 
 	CGameManager();
+	~CGameManager() {};
 
 	template <class T>
 	/*inline*/ CUpdatedObject* CreateObject();
@@ -33,6 +34,7 @@ public:
 template<class T>
 inline CUpdatedObject* CGameManager::CreateObject()
 {
-	m_dequeUpdatedObjects.push_back(new T);
+	m_dequeUpdatedObjects.emplace_back(new T);
+	m_dequeUpdatedObjects.back()->m_pManager = this;
 	return m_dequeUpdatedObjects.back();
 }

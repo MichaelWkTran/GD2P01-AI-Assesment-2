@@ -16,10 +16,11 @@ public:
 	float fWanderTimer;
 	float fWanderCooldown;
 
-	sf::Vector2f m_v2fTarget;
+	sf::Vector2f m_v2fWanderTarget;
 	CAgent* m_pTarget;
 
 	CAgent();
+	virtual ~CAgent();
 
 	virtual void Update(sf::RenderWindow& _RenderWindow);
 };

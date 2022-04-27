@@ -14,6 +14,8 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 {
 	_RenderWindow.setVisible(false);
 	m_pGameManager->Clear();
+	m_pGameManager->m_uMaxAgents = 0U;
+	m_pGameManager->m_uAgentCount = 0U;
 	int iInput = -1;
 
 	while (true)
@@ -136,7 +138,9 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 			Agent->m_fMaxVelocity = 200.0f;
 			Agent->m_AgentBehaviour = AgentBehaviour::Wander;
 		}
-		
+		m_pGameManager->m_uMaxAgents = 50U;
+		m_pGameManager->m_uAgentCount = 30U;
+
 		_RenderWindow.setVisible(true);
 		system("CLS");
 
@@ -167,6 +171,14 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 		_RenderWindow.setVisible(true);
 		system("CLS");
 
+		for (int i = 0; i < 30; i++)
+		{
+			CAgent* Agent = (CAgent*)m_pGameManager->CreateObject<CAgent>();
+			Agent->m_fMaxVelocity = 300.0f;
+			Agent->m_AgentBehaviour = AgentBehaviour::Flocking;
+		}
+		m_pGameManager->m_uMaxAgents = 50U;
+		m_pGameManager->m_uAgentCount = 30U;
 
 		std::cout << "Flocking\n\n";
 		std::cout << "Press BACKSPACE to return to the main menu";
@@ -179,6 +191,20 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 		_RenderWindow.setVisible(true);
 		system("CLS");
 
+		CAgent* Player = (CAgent*)m_pGameManager->CreateObject<CAgent>();
+		Player->m_fMaxVelocity = 100.0f;
+		Player->m_sprDraw.setColor(sf::Color::Red);
+		Player->m_AgentBehaviour = AgentBehaviour::Seek;
+
+		for (int i = 0; i < 15; i++)
+		{
+			CAgent* Agent = (CAgent*)m_pGameManager->CreateObject<CAgent>();
+			Agent->m_fMaxVelocity = 300.0f;
+			Agent->m_pTarget = Player;
+			Agent->m_AgentBehaviour = AgentBehaviour::LeaderFollowing;
+		}
+		m_pGameManager->m_uMaxAgents = 15U;
+		m_pGameManager->m_uAgentCount = 15U;
 
 		std::cout << "Leader Following\n\n";
 		std::cout << "Press BACKSPACE to return to the main menu";
