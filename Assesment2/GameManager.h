@@ -23,7 +23,7 @@ public:
 	~CGameManager() {};
 
 	template <class T>
-	/*inline*/ CUpdatedObject* CreateObject();
+	/*inline*/ T* CreateObject();
 	void Clear();
 
 	sf::Vector2f* GetViewPositionPointer();
@@ -32,9 +32,9 @@ public:
 };
 
 template<class T>
-inline CUpdatedObject* CGameManager::CreateObject()
+inline T* CGameManager::CreateObject()
 {
 	m_dequeUpdatedObjects.emplace_back(new T);
 	m_dequeUpdatedObjects.back()->m_pManager = this;
-	return m_dequeUpdatedObjects.back();
+	return (T*)m_dequeUpdatedObjects.back();
 }

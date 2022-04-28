@@ -2,6 +2,7 @@
 //#include <SFML/Graphics.hpp>
 //#include <string>
 #include "Agent.h"
+#include "ExternalVariables.h"
 
 CGameManager::CGameManager()
 {
@@ -38,24 +39,27 @@ void CGameManager::Update(sf::RenderWindow& _RenderWindow)
 	if (m_uMaxAgents > 0)
 	{
 		//Check Mouse Input and Create or delete Agents
-		//if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-		//{
-		//	if (!m_bLeftMouseButtonPressed)
-		//	{
-		//		m_bLeftMouseButtonPressed = true;
-		//
-		//		//Create Agent
-		//		if (m_uAgentCount < m_uMaxAgents)
-		//		{
-		//			CreateObject<CAgent*>();
-		//			m_uAgentCount++;
-		//		}
-		//	}
-		//}
-		//else
-		//{
-		//	if (m_bLeftMouseButtonPressed) m_bLeftMouseButtonPressed = false;
-		//}
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+		{
+			if (!m_bLeftMouseButtonPressed)
+			{
+				m_bLeftMouseButtonPressed = true;
+		
+				//Create Agent
+				if (m_uAgentCount < m_uMaxAgents)
+				{
+					CAgent* pAgent = CreateObject<CAgent>();
+					funAgentPropreties(pAgent);
+					pAgent->m_v2fPosition = _RenderWindow.mapPixelToCoords(sf::Mouse::getPosition(_RenderWindow));
+
+					m_uAgentCount++;
+				}
+			}
+		}
+		else
+		{
+			if (m_bLeftMouseButtonPressed) m_bLeftMouseButtonPressed = false;
+		}
 
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
 		{
@@ -67,7 +71,7 @@ void CGameManager::Update(sf::RenderWindow& _RenderWindow)
 				if (m_uAgentCount > 0)
 				{
 					for (CUpdatedObject*& pUpdatedObjects : m_dequeUpdatedObjects)
-						if (dynamic_cast<CAgent*>(pUpdatedObjects) != nullptr)
+						if (dynamic_cast<CAgent*>(pUpdatedObjects) != nullptr && dynamic_cast<CAgent*>(pUpdatedObjects) != pPlayer)
 						{
 							pUpdatedObjects->m_bDeleteObject = true;
 							m_uAgentCount--;
