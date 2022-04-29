@@ -1,9 +1,7 @@
 #include "ConsoleInterface.h"
-#include "Agent.h"
 #include "ExternalVariables.h"
-//#include "GameManager.h"
-//#include <iostream>
-//#include <limits>
+#include "Agent.h"
+#include <iostream>
 
 CConsoleInterface::CConsoleInterface(CGameManager* _pGameManager)
 {
@@ -16,8 +14,8 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 	m_pGameManager->Clear();
 	m_pGameManager->m_uMaxAgents = 0U;
 	m_pGameManager->m_uAgentCount = 0U;
-	pPlayer = nullptr;
-	funAgentPropreties = nullptr;
+	e_pPlayer = nullptr;
+	e_funAgentPropreties = nullptr;
 	int iInput = -1;
 
 	while (true)
@@ -92,13 +90,13 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 	}
 	case 2: //Pursue
 	{
-		pPlayer = m_pGameManager->CreateObject<CAgent>();
-		pPlayer->m_fMaxVelocity = 400.0f;
-		pPlayer->m_sprDraw.setColor(sf::Color::Red);
-		pPlayer->m_AgentBehaviour = AgentBehaviour::Seek;
+		e_pPlayer = m_pGameManager->CreateObject<CAgent>();
+		e_pPlayer->m_fMaxVelocity = 400.0f;
+		e_pPlayer->m_sprDraw.setColor(sf::Color::Red);
+		e_pPlayer->m_AgentBehaviour = AgentBehaviour::Seek;
 
 		CAgent* pAgent = m_pGameManager->CreateObject<CAgent>();
-		pAgent->m_pTarget = pPlayer;
+		pAgent->m_pTarget = e_pPlayer;
 		pAgent->m_fMaxVelocity = 300.0f;
 		pAgent->m_AgentBehaviour = AgentBehaviour::Pursue;
 
@@ -107,6 +105,8 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 
 
 		std::cout << "Pursue\n\n";
+		std::cout << "The agent will approach the point the player is heading.\n";
+		std::cout << "The player is the red arrow that follows your mouse. Move your mouse to change where the player will move towards.\n\n";
 		std::cout << "Press BACKSPACE to return to the main menu";
 
 
@@ -117,18 +117,20 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 		_RenderWindow.setVisible(true);
 		system("CLS");
 
-		pPlayer = m_pGameManager->CreateObject<CAgent>();
-		pPlayer->m_fMaxVelocity = 400.0f;
-		pPlayer->m_sprDraw.setColor(sf::Color::Red);
-		pPlayer->m_AgentBehaviour = AgentBehaviour::Seek;
+		e_pPlayer = m_pGameManager->CreateObject<CAgent>();
+		e_pPlayer->m_fMaxVelocity = 400.0f;
+		e_pPlayer->m_sprDraw.setColor(sf::Color::Red);
+		e_pPlayer->m_AgentBehaviour = AgentBehaviour::Seek;
 
 		CAgent* pAgent = m_pGameManager->CreateObject<CAgent>();
-		pAgent->m_pTarget = pPlayer;
+		pAgent->m_pTarget = e_pPlayer;
 		pAgent->m_fMaxVelocity = 300.0f;
 		pAgent->m_AgentBehaviour = AgentBehaviour::Evade;
 
 
 		std::cout << "Evade\n\n";
+		std::cout << "The agent will avoid the point the player is heading.\n";
+		std::cout << "The player is the red arrow that follows your mouse. Move your mouse to change where the player will move towards.\n\n";
 		std::cout << "Press BACKSPACE to return to the main menu";
 
 
@@ -136,13 +138,13 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 	}
 	case 4: //Wander
 	{
-		funAgentPropreties = [](CAgent* _pAgent) -> void
+		e_funAgentPropreties = [](CAgent* _pAgent) -> void
 		{
 			_pAgent->m_fMaxVelocity = 200.0f;
 			_pAgent->m_AgentBehaviour = AgentBehaviour::Wander;
 		};
 
-		for (int i = 0; i < 30; i++) funAgentPropreties(m_pGameManager->CreateObject<CAgent>());
+		for (int i = 0; i < 30; i++) e_funAgentPropreties(m_pGameManager->CreateObject<CAgent>());
 		
 		m_pGameManager->m_uMaxAgents = 50U;
 		m_pGameManager->m_uAgentCount = 30U;
@@ -152,7 +154,8 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 
 
 		std::cout << "Wander\n\n";
-		std::cout << "All agents will wander around the screen.\n\n";
+		std::cout << "All agents will wander around the screen.\n";
+		std::cout << "Press the left mouse button to create an agent and press the right mouse button to delete one.\n\n";
 		std::cout << "Press BACKSPACE to return to the main menu";
 
 
@@ -168,6 +171,7 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 
 
 		std::cout << "Arrival\n\n";
+		std::cout << "The agent will approach the mouse and slow down until it stops at it. Move your mouse to change where the agent will avoid.\n\n";
 		std::cout << "Press BACKSPACE to return to the main menu";
 
 
@@ -175,13 +179,13 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 	}
 	case 6: //Flocking
 	{
-		funAgentPropreties = [](CAgent* _pAgent) -> void
+		e_funAgentPropreties = [](CAgent* _pAgent) -> void
 		{
-			_pAgent->m_fMaxVelocity = 300.0f;
+			_pAgent->m_fMaxVelocity = 200.0f;
 			_pAgent->m_AgentBehaviour = AgentBehaviour::Flocking;
 		};
 		
-		for (int i = 0; i < 30; i++) funAgentPropreties(m_pGameManager->CreateObject<CAgent>());
+		for (int i = 0; i < 30; i++) e_funAgentPropreties(m_pGameManager->CreateObject<CAgent>());
 		
 		m_pGameManager->m_uMaxAgents = 50U;
 		m_pGameManager->m_uAgentCount = 30U;
@@ -189,7 +193,10 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 		_RenderWindow.setVisible(true);
 		system("CLS");
 
+
 		std::cout << "Flocking\n\n";
+		std::cout << "All agents will group together and follow a common direction. \n";
+		std::cout << "Press the left mouse button to create an agent and press the right mouse button to delete one.\n\n";
 		std::cout << "Press BACKSPACE to return to the main menu";
 
 
@@ -197,19 +204,19 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 	}
 	case 7: //Leader Following
 	{
-		pPlayer = m_pGameManager->CreateObject<CAgent>();
-		pPlayer->m_fMaxVelocity = 100.0f;
-		pPlayer->m_sprDraw.setColor(sf::Color::Red);
-		pPlayer->m_AgentBehaviour = AgentBehaviour::Seek;
+		e_pPlayer = m_pGameManager->CreateObject<CAgent>();
+		e_pPlayer->m_fMaxVelocity = 50.0f;
+		e_pPlayer->m_sprDraw.setColor(sf::Color::Red);
+		e_pPlayer->m_AgentBehaviour = AgentBehaviour::Seek;
 
-		funAgentPropreties = [](CAgent* _pAgent) -> void
+		e_funAgentPropreties = [](CAgent* _pAgent) -> void
 		{
-			_pAgent->m_fMaxVelocity = 300.0f;
-			_pAgent->m_pTarget = pPlayer;
+			_pAgent->m_fMaxVelocity = 150.0f;
+			_pAgent->m_pTarget = e_pPlayer;
 			_pAgent->m_AgentBehaviour = AgentBehaviour::LeaderFollowing;
 		};
 
-		for (int i = 0; i < 15; i++) funAgentPropreties(m_pGameManager->CreateObject<CAgent>());
+		for (int i = 0; i < 15; i++) e_funAgentPropreties(m_pGameManager->CreateObject<CAgent>());
 
 		m_pGameManager->m_uMaxAgents = 15U;
 		m_pGameManager->m_uAgentCount = 15U;
@@ -219,6 +226,8 @@ void CConsoleInterface::Update(sf::RenderWindow& _RenderWindow)
 
 
 		std::cout << "Leader Following\n\n";
+		std::cout << "All agents will group together and follow behind the player. \n";
+		std::cout << "Press the left mouse button to create an agent and press the right mouse button to delete one.\n\n";
 		std::cout << "Press BACKSPACE to return to the main menu";
 
 

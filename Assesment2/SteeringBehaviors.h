@@ -2,8 +2,6 @@
 #include "SFML/System/Vector2.hpp"
 #include "Vector2Methods.h"
 #include "ExternalVariables.h"
-#include <stdlib.h>
-#include <time.h>
 
 using namespace sf;
 
@@ -11,7 +9,7 @@ namespace SteeringBehaviours
 {
 	void AddForce(Vector2f _v2fForce, Vector2f& _v2fVelocity, const float _fMaxVelocity, const float _fMaxForce, const float _fMass = 1.0f)
 	{
-		_v2fVelocity += (Truncate(_v2fForce, _fMaxForce) / _fMass) * fDeltatime;
+		_v2fVelocity += (Truncate(_v2fForce, _fMaxForce) / _fMass) * e_fDeltatime;
 		_v2fVelocity = Truncate(_v2fVelocity, _fMaxVelocity);
 	}
 
@@ -105,29 +103,15 @@ namespace SteeringBehaviours
 	{
 		if (_vNeighbours.size() == 0) return Vector2f();
 
-		//Vector2f v2fCenterOfMass = _v2fPosition;
-		//for (int i = 0; i < (int)_vNeighbours.size(); i++) v2fCenterOfMass += _vNeighbours[i];
-		//v2fCenterOfMass /= (float)_vNeighbours.size();
-		//
-		//return Flee(_v2fPosition, v2fCenterOfMass, _v2fVelocity, _fMaxVelocity);
-		//Vector2f v2fDifference = _v2fPosition - v2fCenterOfMass;
-		//Vector2f v2fDesiredVelocity = Normalise(v2fDifference) * _fMaxVelocity * ((Magnitude(v2fDifference) - fSeparationRadius) / (-fSeparationRadius));
-
-
-
 		Vector2f v2fDesiredVelocity;
 		for (int i = 0; i < (int)_vNeighbours.size(); i++)
 		{
 			Vector2f v2fDifference = _v2fPosition - _vNeighbours[i];
-			//if (v2fDifference == Vector2f())
-			//{
-			//	float fVectorAngle = (rand() % 360) * (3.141592653589793238463f / 180.0f);
-			//	v2fDifference = Vector2f(cosf(fVectorAngle), sinf(fVectorAngle));
-			//}
-			
-			v2fDesiredVelocity += Normalise(v2fDifference) * _fMaxVelocity * ((Magnitude(v2fDifference) - fSeparationRadius)/(-fSeparationRadius));
-		}	
+			if (v2fDifference == Vector2f()) continue;
+			v2fDesiredVelocity += Normalise(v2fDifference) / Magnitude(v2fDifference);
+		}
 		v2fDesiredVelocity /= (float)_vNeighbours.size();
+		v2fDesiredVelocity = Normalise(v2fDesiredVelocity) * _fMaxVelocity;
 
 		return v2fDesiredVelocity - _v2fVelocity;
 	}

@@ -1,12 +1,8 @@
-#include "ExternalVariables.h"
 #include <SFML/Graphics.hpp>
+#include "ExternalVariables.h"
 #include "ConsoleInterface.h"
 #include "GameManager.h"
 #include "Agent.h"
-#include "Button.h"
-#include <Windows.h>
-#include <stdlib.h>
-#include <time.h>
 
 void SetView(sf::RenderWindow& GameWindow, sf::View& GameWindowView, const sf::Vector2u& _v2uOriginalSize);
 
@@ -19,7 +15,7 @@ int main()
 	CConsoleInterface ConsoleInterface(pGameManager);
 	
 	//Create the game window
-	sf::RenderWindow GameWindow(sf::VideoMode(v2uGameWindowSize.x, v2uGameWindowSize.y), "");
+	sf::RenderWindow GameWindow(sf::VideoMode(e_v2uGameWindowSize.x, e_v2uGameWindowSize.y), "");
 	sf::View GameWindowView;
 
 	srand((unsigned int)time(NULL));
@@ -31,7 +27,7 @@ int main()
 	while (GameWindow.isOpen())
 	{
 		//Set Delta Time
-		fDeltatime = clockDeltaTime.restart().asSeconds();
+		e_fDeltatime = e_clockDeltaTime.restart().asSeconds();
 		
 		//Poll Events
 		sf::Event WindowEvent;
@@ -46,7 +42,7 @@ int main()
 				ConsoleInterface.Update(GameWindow);
 				break;
 			case sf::Event::Resized:
-				SetView(GameWindow, GameWindowView, v2uGameWindowSize);
+				SetView(GameWindow, GameWindowView, e_v2uGameWindowSize);
 				break;
 			}
 		}

@@ -149,7 +149,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Button.h" />
     <ClInclude Include="Agent.h" />
     <ClInclude Include="ConsoleInterface.h" />
     <ClInclude Include="ExternalVariables.h" />
@@ -160,7 +159,6 @@
     <ClInclude Include="Vector2Methods.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Button.cpp" />
     <ClCompile Include="Agent.cpp" />
     <ClCompile Include="ConsoleInterface.cpp" />
     <ClCompile Include="ExternalVariables.cpp" />

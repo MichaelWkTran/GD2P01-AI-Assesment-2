@@ -1,7 +1,7 @@
+#pragma once
 #include "SFML/System/Vector2.hpp"
 #include <cmath>
 
-#pragma once
 namespace sf
 {
 	float Magnitude(sf::Vector2f _v2f)

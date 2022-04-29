@@ -1,8 +1,4 @@
 #include "GameObject.h"
-//#include <SFML/Graphics.hpp>
-//#include <string>
-//#include <deque>
-//#include <set>
 
 //Constructors
 CGameObject::CGameObject()

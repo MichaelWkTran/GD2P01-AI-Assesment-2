@@ -1,13 +1,13 @@
 #include "Agent.h"
 #include "Vector2Methods.h"
-#include <iostream>
-#include "ExternalVariables.h"
 #include "SteeringBehaviors.h"
-#include "GameManager.h"
+#include "ExternalVariables.h"
+
+#define PI 3.141592653589793238463f
 
 CAgent::CAgent()
 {
-	m_v2fPosition = sf::Vector2f(v2uGameWindowSize) / 2.0f;
+	m_v2fPosition = sf::Vector2f(e_v2uGameWindowSize) / 2.0f;
 	m_v2fOrigin = sf::Vector2f(16.0f, 16.0f);
 	
 	m_texDraw.loadFromFile("Assets/Sprites/Agent.png");
@@ -20,8 +20,8 @@ CAgent::CAgent()
 	m_fMaxVelocity = 600.0f;
 	m_fMaxForce = 300.0f;
 
-	fWanderTimer = 0.5f;
-	fWanderCooldown = 0.0f;
+	m_fWanderTimer = 0.5f;
+	m_fWanderCooldown = 0.0f;
 	m_pTarget = nullptr;
 }
 
@@ -32,7 +32,7 @@ CAgent::~CAgent()
 
 /*virtual*/ void CAgent::Update(sf::RenderWindow& _RenderWindow)
 {
-	auto AddForce = [this](sf::Vector2f&& _v2fForce) -> void
+	auto lamAddForce = [this](sf::Vector2f&& _v2fForce) -> void
 	{
 		SteeringBehaviours::AddForce(_v2fForce, m_v2fVelocity, m_fMaxVelocity, m_fMaxForce);
 	};
@@ -42,14 +42,14 @@ CAgent::~CAgent()
 	case AgentBehaviour::Seek:
 	{
 		sf::Vector2f v2fTarget = _RenderWindow.mapPixelToCoords(sf::Mouse::getPosition(_RenderWindow));
-		AddForce(SteeringBehaviours::Seek(m_v2fPosition, v2fTarget, m_v2fVelocity, m_fMaxVelocity));
+		lamAddForce(SteeringBehaviours::Seek(m_v2fPosition, v2fTarget, m_v2fVelocity, m_fMaxVelocity));
 
 		break;
 	}
 	case AgentBehaviour::Flee:
 	{
 		sf::Vector2f v2fTarget = _RenderWindow.mapPixelToCoords(sf::Mouse::getPosition(_RenderWindow));
-		AddForce(SteeringBehaviours::Flee(m_v2fPosition, v2fTarget, m_v2fVelocity, m_fMaxVelocity));
+		lamAddForce(SteeringBehaviours::Flee(m_v2fPosition, v2fTarget, m_v2fVelocity, m_fMaxVelocity));
 
 		break;
 	}
@@ -58,7 +58,7 @@ CAgent::~CAgent()
 		if (m_pTarget == nullptr) break;
 	
 		sf::Vector2f v2fTarget = SteeringBehaviours::GetPursueTargetPosition(m_v2fPosition, m_pTarget->m_v2fPosition, m_v2fVelocity, m_pTarget->m_v2fVelocity, 10000.0f);
-		AddForce(SteeringBehaviours::Seek(m_v2fPosition, v2fTarget, m_v2fVelocity, m_fMaxVelocity));
+		lamAddForce(SteeringBehaviours::Seek(m_v2fPosition, v2fTarget, m_v2fVelocity, m_fMaxVelocity));
 
 		break;
 	}	
@@ -67,30 +67,30 @@ CAgent::~CAgent()
 		if (m_pTarget == nullptr) break;
 	
 		sf::Vector2f v2fTarget = SteeringBehaviours::GetPursueTargetPosition(m_v2fPosition, m_pTarget->m_v2fPosition, m_v2fVelocity, m_pTarget->m_v2fVelocity, 10000.0f);
-		AddForce(SteeringBehaviours::Flee(m_v2fPosition, v2fTarget, m_v2fVelocity, m_fMaxVelocity));
+		lamAddForce(SteeringBehaviours::Flee(m_v2fPosition, v2fTarget, m_v2fVelocity, m_fMaxVelocity));
 
 		break;
 	}
 	case AgentBehaviour::Wander:
 	{
-		if (fWanderCooldown <= 0)
+		if (m_fWanderCooldown <= 0)
 		{
 			m_v2fWanderTarget = SteeringBehaviours::GetWanderTargetPosition(150.0f, 80.0f, m_v2fPosition, m_v2fVelocity);
-			fWanderCooldown = fWanderTimer;
+			m_fWanderCooldown = m_fWanderTimer;
 		}
 		else
 		{
-			fWanderCooldown -= fDeltatime;
+			m_fWanderCooldown -= e_fDeltatime;
 		}
 	
-		AddForce(SteeringBehaviours::Seek(m_v2fPosition, m_v2fWanderTarget, m_v2fVelocity, m_fMaxVelocity));
+		lamAddForce(SteeringBehaviours::Seek(m_v2fPosition, m_v2fWanderTarget, m_v2fVelocity, m_fMaxVelocity));
 
 		break;
 	}
 	case AgentBehaviour::Arrival:
 	{
 		sf::Vector2f v2fTarget = _RenderWindow.mapPixelToCoords(sf::Mouse::getPosition(_RenderWindow));
-		AddForce(SteeringBehaviours::Arrive(400.0f, m_v2fPosition, v2fTarget, m_v2fVelocity, m_fMaxVelocity));
+		lamAddForce(SteeringBehaviours::Arrive(400.0f, m_v2fPosition, v2fTarget, m_v2fVelocity, m_fMaxVelocity));
 
 		break;
 	}
@@ -103,7 +103,7 @@ CAgent::~CAgent()
 		std::vector<sf::Vector2f> vCohesionNeighbours;
 		std::vector<sf::Vector2f> vCohesionNeighbourVelocities;
 		
-		float fSepparationRadius = 200;
+		float fSepparationRadius = 48;
 		std::vector<sf::Vector2f> vSepparationNeighbours;
 
 		//Find agents within cohesion && sepparation radius
@@ -125,13 +125,15 @@ CAgent::~CAgent()
 		}
 
 		sf::Vector2f v2fSteeringForce;
-		v2fSteeringForce += SteeringBehaviours::Separation(fSepparationRadius, vSepparationNeighbours, m_v2fPosition, m_v2fVelocity, m_fMaxVelocity) * 0.6f;
-		v2fSteeringForce += SteeringBehaviours::Alignment(vCohesionNeighbours, vCohesionNeighbourVelocities, m_v2fVelocity) * 0.15f;
+		//Apply Separation
+		v2fSteeringForce += SteeringBehaviours::Separation(fSepparationRadius, vSepparationNeighbours, m_v2fPosition, m_v2fVelocity, m_fMaxVelocity) * 0.5f;
+		//Apply Cohesion
 		sf::Vector2f v2fTarget = SteeringBehaviours::GetCohesionCentreOfMass(vCohesionNeighbours, m_v2fPosition);
-		v2fSteeringForce += SteeringBehaviours::Seek(m_v2fPosition, v2fTarget, m_v2fVelocity, m_fMaxVelocity) * 0.25f;
+		v2fSteeringForce += SteeringBehaviours::Seek(m_v2fPosition, v2fTarget, m_v2fVelocity, m_fMaxVelocity) * 0.3f;
+		//Apply Alignment
+		v2fSteeringForce += SteeringBehaviours::Alignment(vCohesionNeighbours, vCohesionNeighbourVelocities, m_v2fVelocity) * 0.2f;
 
-		AddForce(std::move(v2fSteeringForce));
-		//AddForce(SteeringBehaviours::Separation(fSepparationRadius, vSepparationNeighbours, m_v2fPosition, m_v2fVelocity, m_fMaxVelocity));
+		lamAddForce(std::move(v2fSteeringForce));
 		break;
 	}
 	case AgentBehaviour::LeaderFollowing:
@@ -146,7 +148,7 @@ CAgent::~CAgent()
 		bool bInfrontOfLeader = false;
 		{
 			float fLeaderConeRadius = 200.0f;
-			float fLeaderConeAngle = 30.0f * (3.141592653589793238463f / 180.0f);
+			float fLeaderConeAngle = 30.0f * (PI / 180.0f);
 
 			if (sf::Magnitude(m_pTarget->m_v2fPosition - m_v2fPosition) < fLeaderConeRadius)
 			{
@@ -192,13 +194,13 @@ CAgent::~CAgent()
 			v2fSteeringForce += SteeringBehaviours::Separation(fSepparationRadius, vSepparationNeighbours, m_v2fPosition, m_v2fVelocity, m_fMaxVelocity) * 0.6f;
 
 			//Apply ArriveForce
-			float fLeaderBehindDistance = 100.0f;
+			float fLeaderBehindDistance = 32.0f;
 			v2fTarget = m_pTarget->m_v2fPosition - (sf::Normalise(m_pTarget->m_v2fVelocity) * fLeaderBehindDistance);
 			v2fSteeringForce += SteeringBehaviours::Arrive(400.0f, m_v2fPosition, v2fTarget, m_v2fVelocity, m_fMaxVelocity) * 0.4f;
 		}
 
 
-		AddForce(std::move(v2fSteeringForce));
+		lamAddForce(std::move(v2fSteeringForce));
 
 		break;
 	}
@@ -211,15 +213,15 @@ CAgent::~CAgent()
 			if (sf::Magnitude(m_v2fVelocity) < 300.0f && (m_AgentBehaviour == AgentBehaviour::Flee || m_AgentBehaviour == AgentBehaviour::Evade)) { m_v2fVelocity = sf::Normalise(m_v2fVelocity) * 300.0f; }
 		};
 
-		if (m_v2fPosition.x < -m_sprDraw.getTextureRect().width) { m_v2fPosition.x = (float)v2uGameWindowSize.x + (float)m_sprDraw.getTextureRect().width; MomemtumOutsideBounds(); }
-		else if (m_v2fPosition.x > (float)v2uGameWindowSize.x + m_sprDraw.getTextureRect().width) { m_v2fPosition.x = -(float)m_sprDraw.getTextureRect().width; MomemtumOutsideBounds(); }
+		if (m_v2fPosition.x < -m_sprDraw.getTextureRect().width) { m_v2fPosition.x = (float)e_v2uGameWindowSize.x + (float)m_sprDraw.getTextureRect().width; MomemtumOutsideBounds(); }
+		else if (m_v2fPosition.x > (float)e_v2uGameWindowSize.x + m_sprDraw.getTextureRect().width) { m_v2fPosition.x = -(float)m_sprDraw.getTextureRect().width; MomemtumOutsideBounds(); }
 
-		if (m_v2fPosition.y < -m_sprDraw.getTextureRect().height) { m_v2fPosition.y = (float)v2uGameWindowSize.y + (float)m_sprDraw.getTextureRect().height; MomemtumOutsideBounds(); }
-		else if (m_v2fPosition.y > (float)v2uGameWindowSize.y + m_sprDraw.getTextureRect().height) { m_v2fPosition.y = -(float)m_sprDraw.getTextureRect().height; MomemtumOutsideBounds(); }
+		if (m_v2fPosition.y < -m_sprDraw.getTextureRect().height) { m_v2fPosition.y = (float)e_v2uGameWindowSize.y + (float)m_sprDraw.getTextureRect().height; MomemtumOutsideBounds(); }
+		else if (m_v2fPosition.y > (float)e_v2uGameWindowSize.y + m_sprDraw.getTextureRect().height) { m_v2fPosition.y = -(float)m_sprDraw.getTextureRect().height; MomemtumOutsideBounds(); }
 	}
 	
-	m_v2fPosition += m_v2fVelocity * fDeltatime;
-	m_fRotation = (180.0f / 3.141592653589793238463f) * std::atan2f(m_v2fVelocity.y, m_v2fVelocity.x) + 90.0f;
+	m_v2fPosition += m_v2fVelocity * e_fDeltatime;
+	m_fRotation = (180.0f / PI) * std::atan2f(m_v2fVelocity.y, m_v2fVelocity.x) + 90.0f;
 
 	m_sprDraw.setPosition(m_v2fPosition);
 	m_sprDraw.setOrigin(m_v2fOrigin);

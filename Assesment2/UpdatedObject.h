@@ -1,6 +1,6 @@
-#include <SFML/Graphics.hpp>
-
 #pragma once
+#include <SFML/Graphics/RenderWindow.hpp>
+
 class CUpdatedObject
 {
 public:

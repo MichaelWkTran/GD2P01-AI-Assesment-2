@@ -1,8 +1,10 @@
-#include "GameManager.h"
-#include <iostream>
-#include <limits>
+//This class is used for any interactions involving the console.
+//This includes setting up variables and creating objects to be
+//used in the game manager when the user chooses a behaviour to view
 
 #pragma once
+#include "GameManager.h"
+
 class CConsoleInterface
 {
 private:

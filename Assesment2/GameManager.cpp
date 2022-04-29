@@ -1,8 +1,7 @@
 #include "GameManager.h"
-//#include <SFML/Graphics.hpp>
-//#include <string>
 #include "Agent.h"
 #include "ExternalVariables.h"
+#include <iostream>
 
 CGameManager::CGameManager()
 {
@@ -41,15 +40,18 @@ void CGameManager::Update(sf::RenderWindow& _RenderWindow)
 		//Check Mouse Input and Create or delete Agents
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 		{
+			//When the left mouse button is held
+
 			if (!m_bLeftMouseButtonPressed)
 			{
+				//When the left mouse button is pressed
 				m_bLeftMouseButtonPressed = true;
 		
 				//Create Agent
 				if (m_uAgentCount < m_uMaxAgents)
 				{
 					CAgent* pAgent = CreateObject<CAgent>();
-					funAgentPropreties(pAgent);
+					e_funAgentPropreties(pAgent);
 					pAgent->m_v2fPosition = _RenderWindow.mapPixelToCoords(sf::Mouse::getPosition(_RenderWindow));
 
 					m_uAgentCount++;
@@ -58,20 +60,27 @@ void CGameManager::Update(sf::RenderWindow& _RenderWindow)
 		}
 		else
 		{
-			if (m_bLeftMouseButtonPressed) m_bLeftMouseButtonPressed = false;
+			if (m_bLeftMouseButtonPressed)
+			{
+				//When the left mouse button is released
+				m_bLeftMouseButtonPressed = false;
+			}
 		}
 
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
 		{
+			//When the right mouse button is held
+
 			if (!m_bRightMouseButtonPressed)
 			{
+				//When the right mouse button is pressed
 				m_bRightMouseButtonPressed = true;
 
 				//Delete Agents
 				if (m_uAgentCount > 0)
 				{
 					for (CUpdatedObject*& pUpdatedObjects : m_dequeUpdatedObjects)
-						if (dynamic_cast<CAgent*>(pUpdatedObjects) != nullptr && dynamic_cast<CAgent*>(pUpdatedObjects) != pPlayer)
+						if (dynamic_cast<CAgent*>(pUpdatedObjects) != nullptr && dynamic_cast<CAgent*>(pUpdatedObjects) != e_pPlayer)
 						{
 							pUpdatedObjects->m_bDeleteObject = true;
 							m_uAgentCount--;
@@ -82,7 +91,11 @@ void CGameManager::Update(sf::RenderWindow& _RenderWindow)
 		}
 		else
 		{
-			if (m_bRightMouseButtonPressed) m_bRightMouseButtonPressed = false;
+			if (m_bRightMouseButtonPressed)
+			{
+				//When the right mouse button is released
+				m_bRightMouseButtonPressed = false;
+			}
 		}
 	}
 

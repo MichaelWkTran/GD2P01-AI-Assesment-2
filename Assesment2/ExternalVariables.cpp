@@ -1,13 +1,11 @@
 #include "ExternalVariables.h"
-//#include <SFML/Graphics.hpp>
-//#include "Agent.h"
 
-sf::Vector2u v2uGameWindowSize(800U, 450U);
+sf::Vector2u e_v2uGameWindowSize(800U, 450U);
 
 //Time
-float fDeltatime = 0.0f;
-sf::Clock clockDeltaTime;
+float e_fDeltatime = 0.0f;
+sf::Clock e_clockDeltaTime;
 
 //Game
-CAgent* pPlayer = nullptr;
-extern void (*funAgentPropreties)(CAgent*) = nullptr;
+CAgent* e_pPlayer = nullptr;
+void (*e_funAgentPropreties)(CAgent*) = nullptr;

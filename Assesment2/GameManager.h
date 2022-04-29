@@ -1,11 +1,9 @@
-#include <SFML/Graphics.hpp>
-#include <string>
-#include <deque>
-#include <functional>
-#include "UpdatedObject.h"
-#include <iostream>
+//This class is for interactions involving the SFML render window
 
 #pragma once
+#include "UpdatedObject.h"
+#include <deque>
+
 class CGameManager : public CUpdatedObject
 {
 private:

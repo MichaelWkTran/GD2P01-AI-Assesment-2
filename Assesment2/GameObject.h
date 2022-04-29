@@ -1,10 +1,9 @@
+#pragma once
+#include "UpdatedObject.h"
 #include <SFML/Graphics.hpp>
 #include <string>
-#include <deque>
 #include <set>
-#include "UpdatedObject.h"
 
-#pragma once
 class CGameObject : public CUpdatedObject
 {
 protected:
